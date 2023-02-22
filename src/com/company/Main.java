@@ -2,7 +2,6 @@ package com.company;
 
 import java.util.*;
 
-
 class User {
     String id;
     String pass;
