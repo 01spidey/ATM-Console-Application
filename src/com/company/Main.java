@@ -32,7 +32,6 @@ class User {
             System.out.println("\nERROR : Invalid Denomination!!");
             deposit(amt);
         }
-
     }
 
     void pinChange(int pin) {
