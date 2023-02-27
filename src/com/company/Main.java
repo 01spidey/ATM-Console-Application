@@ -1,5 +1,7 @@
 package com.company;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 class User {
@@ -80,7 +82,7 @@ class User {
 
     void addTransaction(String trn) {
         if (transaction.size() == 5) transaction.remove(0);
-        transaction.add(trn);
+        transaction.add("Date : "+(LocalDate.now())+"\n"+trn);
     }
 
     void getStatement() {
@@ -192,10 +194,10 @@ public class Main {
     static ATM atm = new ATM();
 
     static String ask_first() {
-        String admin_id = "123", admin_pass = "123";
+        String admin_id = "admin", admin_pass = "admin123";
         Scanner scn = new Scanner(System.in);
 
-        System.out.println("\n----- LOGIN PORTAL -----\n    1. Admin\n    2. User\n    3. EXIT");
+        System.out.println("\n----- ATM Console -----\n    1. Admin\n    2. User\n    3. EXIT");
         System.out.print("\nLogin as : ");
         int op = scn.nextInt();
 
