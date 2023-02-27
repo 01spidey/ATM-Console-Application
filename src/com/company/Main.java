@@ -1,7 +1,6 @@
 package com.company;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 class User {
@@ -15,6 +14,7 @@ class User {
         this.id = id;
         this.pass = pass;
         this.pin = pin;
+        this.balance = 1000.0;
     }
 
     void checkBalance() {
@@ -46,7 +46,7 @@ class User {
         }
     }
 
-    void withdraw(double amt, int pin) {
+    void withdraw(double amt, int pin, ATM atm) {
         if (pin != this.pin) System.out.println("\nERROR : Invalid PIN !!");
         else {
             if (amt > balance) System.out.println("\nERROR : Insufficient Account Balance!!");
@@ -67,6 +67,7 @@ class User {
                 for (int note : notesDispensed.keySet()) {
                     Main.atm.denominations.put(note, Main.atm.denominations.get(note) - notesDispensed.get(note));
                 }
+                Main.atm.stock-=amt;
                 balance -= amt;
                 addTransaction("Withdrawal : Rs." + amt + "\nBalance : Rs." + balance);
                 System.out.println("\nAmount dispensed: Rs." + amt);
@@ -82,7 +83,7 @@ class User {
 
     void addTransaction(String trn) {
         if (transaction.size() == 5) transaction.remove(0);
-        transaction.add("Date : "+(LocalDate.now())+"\n"+trn);
+        transaction.add("Date : " + (LocalDate.now()) + "\n" + trn);
     }
 
     void getStatement() {
@@ -94,7 +95,7 @@ class User {
         }
     }
 
-    void transfer(double amt, User user) {
+    void transfer(double amt, User user, ATM atm) {
         System.out.println("\nSuccessfully Transferred Rs." + amt + " to " + user.id);
         balance -= amt;
         user.balance += amt;
@@ -210,7 +211,7 @@ public class Main {
 
             if (!(id.equals(admin_id) && pass.equals(admin_pass))) {
                 System.out.println("ERROR : Invalid Credentials !!");
-                ask_first();
+                return "null";
             }
 
             atm.admin = new Admin(id, pass);
@@ -251,7 +252,7 @@ public class Main {
         Scanner scn = new Scanner(System.in);
 
         while (true) {
-            try {
+//            try {
                 String cur_login = ask_first();
 
                 if (cur_login.equals("admin")) {
@@ -275,9 +276,7 @@ public class Main {
 
                                 if (atm.user_map.containsKey(username)) {
                                     System.out.println("ERROR : Username Already Exists!!");
-                                }
-
-                                else {
+                                } else {
                                     System.out.print("Enter Password : ");
                                     pass = scn.nextLine();
                                     System.out.print("Enter PIN : ");
@@ -300,20 +299,16 @@ public class Main {
 
                             case 4:
                                 atm.curr_login = null;
-                                System.out.println("Tata...Bye!!");
+                                System.out.println("Logging Out !!");
                                 break;
                         }
 
                         if (atm.curr_login == null) break;
                     }
-                }
-
-                else if (cur_login.equals("exit")) {
+                } else if (cur_login.equals("exit")) {
                     System.out.println("Shutting the System Down!!");
                     break;
-                }
-
-                else if (cur_login.equals("null")) ;
+                } else if (cur_login.equals("null")) ;
 
                 else {
                     User user = atm.user_map.get(cur_login);
@@ -343,7 +338,7 @@ public class Main {
                                 System.out.print("Enter the PIN : ");
                                 pin = scn.nextInt();
                                 if (amt > atm.stock) System.out.println("\nERROR : Insufficient ATM Cash!!");
-                                else user.withdraw(amt, pin);
+                                else user.withdraw(amt, pin, atm);
                                 break;
 
                             case 3:
@@ -363,10 +358,9 @@ public class Main {
                                 String name = scn.next();
                                 if (!(atm.user_map.containsKey(name))) {
                                     System.out.println("\nERROR : No User Found!!");
-                                }
-                                else {
+                                } else {
                                     if (amt > user.balance) System.out.println("\nERROR : Insufficient Balance!!");
-                                    else user.transfer(amt, atm.user_map.get(name));
+                                    else user.transfer(amt, atm.user_map.get(name), atm);
                                 }
                                 break;
 
@@ -378,16 +372,17 @@ public class Main {
 
                             case 7:
                                 atm.curr_login = null;
-                                System.out.println("Tata...Bye!!");
+                                System.out.println("Logging Out !!");
                                 break;
                         }
 
                         if (atm.curr_login == null) break;
                     }
                 }
-            } catch (Exception e) {
-                System.out.println("ERROR : Invalid Input!!");
-            }
+//            }
+//            catch (Exception e) {
+//                System.out.println("ERROR : Invalid Input!!");
+//            }
         }
     }
 }
